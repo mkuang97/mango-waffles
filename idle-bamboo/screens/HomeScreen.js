@@ -14,12 +14,14 @@ import { MonoText } from '../components/StyledText';
 
 export default class HomeScreen extends React.Component {
   state = {
-	oxygen: 0  
+	oxygen: 0,
+	plantNumber: 0,
   };
 
+  
 	tick() {
 		this.setState(prevState => ({
-			oxygen: prevState.oxygen + 1
+			oxygen: prevState.oxygen + 1 * prevState.plantNumber
 		}));
 	}
 
@@ -39,7 +41,7 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
+			{/**<View style={styles.welcomeContainer}>
             <Image
               source={
                 __DEV__
@@ -68,17 +70,19 @@ export default class HomeScreen extends React.Component {
             <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
               <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
             </TouchableOpacity>
-			
-			
-          </View>
-			{this.renderScore()}
-		  <View>
+  </View>**/}
 		  
+		
+		  <View style={styles.helpContainer}>
+		  <Text onPress={this._handleBuyPlant}> Buy Plant </Text>
 		  </View>
-		  <View style={styles.welcomeContainer}>
-			<TouchableOpacity onPress={this._handleTreeClick}>
-				<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
-			</TouchableOpacity>
+		
+          <View style={styles.helpContainer}>
+			{this.renderScore()}
+		  </View>
+		  
+		  <View>
+		  {this.renderPlants()}
 		  </View>
         </ScrollView>
 
@@ -93,16 +97,31 @@ export default class HomeScreen extends React.Component {
     );
   }
   
+  renderPlants = () => {
+	  console.log(this.state.plantNumber)
+	  console.log(0 < this.state.plantNumber)
+	  plants = []
+	  for(let i = 0; i < this.state.plantNumber; i++){
+		  console.log("Created component")
+			plants.push( <View style={styles.welcomeContainer}>
+			<TouchableOpacity onPress={this._handleTreeClick}>
+				<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+			</TouchableOpacity>
+		  </View> )
+		  }
+	return plants
+  }
+  
   	renderScore = () => (
 		<Text
 			style={{
 				textAlign: "center",
 				fontSize: 64,
-				position: "absolute",
+				position: "relative",
 				left: 0,
 				right: 0,
-				color: "black",
-				top: 64,
+				color: "red",
+				top: 0,
 				backgroundColor: "transparent"
 			}}>
 		{this.state.oxygen}
@@ -131,6 +150,10 @@ export default class HomeScreen extends React.Component {
       );
     }
   }
+  
+  _handleBuyPlant = () => {
+	this.setState({ oxygen: this.state.oxygen - 10, plantNumber: this.state.plantNumber + 1});  
+  };
   
   _handleTreeClick = () => {
 	this.setState({ oxygen: this.state.oxygen + 1});  
