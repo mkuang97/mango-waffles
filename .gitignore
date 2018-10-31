@@ -33,3 +33,6 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+node_modules/
+idle-bamboo/node_modules/*
+.expo/
