@@ -21,7 +21,7 @@ export default class HomeScreen extends React.Component {
   
 	tick() {
 		this.setState(prevState => ({
-			oxygen: prevState.oxygen + 1 * prevState.plantNumber
+			oxygen: prevState.oxygen + 1 * prevState.plantNumber + 1
 		}));
 	}
 
