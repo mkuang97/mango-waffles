@@ -15,13 +15,16 @@ import { MonoText } from '../components/StyledText';
 export default class HomeScreen extends React.Component {
   state = {
 	oxygen: 0,
-	plantNumber: 0,
+	plants: [],
   };
 
+	getSum = ({total, plant}) => {
+		return total + plant.increment;
+	}
   
 	tick() {
 		this.setState(prevState => ({
-			oxygen: prevState.oxygen + 1 * prevState.plantNumber + 1
+			oxygen: prevState.oxygen + prevState.plants.reduce(sum, 0) + 1
 		}));
 	}
 
