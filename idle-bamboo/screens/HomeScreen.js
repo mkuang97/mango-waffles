@@ -24,7 +24,7 @@ export default class HomeScreen extends React.Component {
   
 	tick() {
 		this.setState(prevState => ({
-			oxygen: prevState.oxygen + prevState.plants.reduce(sum, 0) + 1
+			oxygen: prevState.oxygen + prevState.plants.reduce(this.getSum, 0) + 1
 		}));
 	}
 
@@ -101,10 +101,10 @@ export default class HomeScreen extends React.Component {
   }
   
   renderPlants = () => {
-	  console.log(this.state.plantNumber)
-	  console.log(0 < this.state.plantNumber)
+	  console.log(this.state.plants.length)
+	  console.log(0 < this.state.plants.length)
 	  plants = []
-	  for(let i = 0; i < this.state.plantNumber; i++){
+	  for(let i = 0; i < this.state.plants.length; i++){
 		  console.log("Created component")
 			plants.push( <View style={styles.welcomeContainer}>
 			<TouchableOpacity onPress={this._handleTreeClick}>
