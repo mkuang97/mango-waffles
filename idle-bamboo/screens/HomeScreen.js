@@ -19,12 +19,14 @@ export default class HomeScreen extends React.Component {
   };
 
 	getSum = ({total, plant}) => {
+		console.log("plant" + plant)
 		return total + plant.increment;
 	}
   
 	tick() {
+		console.log(this.state.plants)
 		this.setState(prevState => ({
-			oxygen: prevState.oxygen + prevState.plants.reduce(this.getSum, 0) + 1
+			oxygen: prevState.oxygen + prevState.plants.reduce((prev, plant) => prev + plant.increment, 0) + 1
 		}));
 	}
 
@@ -106,7 +108,7 @@ export default class HomeScreen extends React.Component {
 	  plants = []
 	  for(let i = 0; i < this.state.plants.length; i++){
 		  console.log("Created component")
-			plants.push( <View style={styles.welcomeContainer}>
+			plants.push( <View style={styles.welcomeContainer} key=i>
 			<TouchableOpacity onPress={this._handleTreeClick}>
 				<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
 			</TouchableOpacity>
@@ -155,7 +157,9 @@ export default class HomeScreen extends React.Component {
   }
   
   _handleBuyPlant = () => {
-	this.setState({ oxygen: this.state.oxygen - 10, plantNumber: this.state.plantNumber + 1});  
+	var newPlants = this.state.plants.slice();
+    newPlants.push({icon: ":)", increment: 1}); 
+	this.setState({ oxygen: this.state.oxygen - 10, plants: newPlants});  
   };
   
   _handleTreeClick = () => {
