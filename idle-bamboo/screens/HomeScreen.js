@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {
+  Dimensions,
+  FlatList,
   Image,
   Platform,
   ScrollView,
@@ -9,8 +11,16 @@ import {
   View,
 } from 'react-native';
 import { WebBrowser } from 'expo';
-
 import { MonoText } from '../components/StyledText';
+import {Ionicons} from '@expo/vector-icons'; 
+
+import BottomUpPanel from "./Popup";
+
+const {height} = Dimensions.get('window');
+const DATA= [{label: "Plant 1", icon: ":)", amount: 10},
+		     {label: "Plant 2", icon: ":)", amount: 10},
+			 {label: "Plant 3", icon: ":)", amount: 10}];
+
 
 export default class HomeScreen extends React.Component {
   state = {
@@ -78,10 +88,6 @@ export default class HomeScreen extends React.Component {
   </View>**/}
 		  
 		
-		  <View style={styles.helpContainer}>
-		  <Text onPress={this._handleBuyPlant}> Buy Plant </Text>
-		  </View>
-		
           <View style={styles.helpContainer}>
 			{this.renderScore()}
 		  </View>
@@ -91,16 +97,49 @@ export default class HomeScreen extends React.Component {
 		  </View>
         </ScrollView>
 
-        <View style={styles.tabBarInfoContainer}>
+        {/**<View style={styles.tabBarInfoContainer}>
           <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
 
           <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
             <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
           </View>
-        </View>
+        </View>**/}
+		
+		<BottomUpPanel
+                      content={this.renderBottomUpPanelContent}
+                      icon={this.renderBottomUpPanelIcon}
+                      topEnd={height - 300}
+                      startHeight={80}
+                      headerText={"List of plants"}
+                      headerTextStyle={{color:"white", 
+                                       fontSize: 15}}
+                      bottomUpSlideBtn={{display: 'flex',
+                                       alignSelf: 'flex-start',
+                                       backgroundColor: 'black',
+                                       alignItems: 'center',
+                                       borderTopColor: 'grey',
+                                       borderTopWidth: 5}}>
+		</BottomUpPanel>  
+		
       </View>
     );
   }
+  
+  
+  renderBottomUpPanelContent = () =>
+          <View>
+               <FlatList style={{ backgroundColor: 'black', opacity: 0.7, flex:1}}
+                    data={DATA}
+                    renderItem={({item}) =>
+                                <Text style={{color:'white', padding:20}}
+									  onPress={this._handleBuyPlant}>{item.label}</Text>
+                               }
+					keyExtractor={(item, index) => index.toString()}
+                />
+          </View>
+          
+  renderBottomUpPanelIcon = () =>
+        <Ionicons name={"ios-arrow-up"} style={{color:"white"}} size={30}/>
   
   renderPlants = () => {
 	  console.log(this.state.plants.length)
@@ -108,7 +147,7 @@ export default class HomeScreen extends React.Component {
 	  plants = []
 	  for(let i = 0; i < this.state.plants.length; i++){
 		  console.log("Created component")
-			plants.push( <View style={styles.welcomeContainer} key=i>
+			plants.push( <View style={styles.welcomeContainer} key={i}>
 			<TouchableOpacity onPress={this._handleTreeClick}>
 				<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
 			</TouchableOpacity>
@@ -129,7 +168,7 @@ export default class HomeScreen extends React.Component {
 				top: 0,
 				backgroundColor: "transparent"
 			}}>
-		{this.state.oxygen}
+		Oxygen: {this.state.oxygen}
 		</Text>
 	);
 
