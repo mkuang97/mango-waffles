@@ -17,9 +17,9 @@ import {Ionicons} from '@expo/vector-icons';
 import BottomUpPanel from "./Popup";
 
 const {height} = Dimensions.get('window');
-const DATA= [{label: "Plant 1", icon: ":)", amount: 10},
+const DATA= [{label: "Plant 1", icon: ":)", amount: 5},
 		     {label: "Plant 2", icon: ":)", amount: 10},
-			 {label: "Plant 3", icon: ":)", amount: 10}];
+			 {label: "Plant 3", icon: ":)", amount: 15}];
 
 
 export default class HomeScreen extends React.Component {
