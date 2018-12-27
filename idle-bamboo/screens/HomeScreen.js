@@ -17,9 +17,9 @@ import {Ionicons} from '@expo/vector-icons';
 import BottomUpPanel from "./Popup";
 
 const {height} = Dimensions.get('window');
-const DATA= [{label: "Plant 1", icon: ":)", amount: 5},
-		     {label: "Plant 2", icon: ":)", amount: 10},
-			 {label: "Plant 3", icon: ":)", amount: 15}];
+const DATA= [{label: "Plant 1", icon: ":)", amount: 5, increment: 1},
+		     {label: "Plant 2", icon: ":)", amount: 10, increment: 5},
+			 {label: "Plant 3", icon: ":)", amount: 15, increment: 10}];
 
 
 export default class HomeScreen extends React.Component {
@@ -56,6 +56,9 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+		
+		{/** note for react to not barf in the render method the comments must follow this form as seen below**/}
+		
 			{/**<View style={styles.welcomeContainer}>
             <Image
               source={
@@ -88,6 +91,8 @@ export default class HomeScreen extends React.Component {
   </View>**/}
 		  
 		
+		{/** TODO: split up various UI peices into several components to prevent unnecessary virtual dom creation
+		on every setState call **/}
           <View style={styles.helpContainer}>
 			{this.renderScore()}
 		  </View>
@@ -110,7 +115,7 @@ export default class HomeScreen extends React.Component {
                       icon={this.renderBottomUpPanelIcon}
                       topEnd={height - 300}
                       startHeight={80}
-                      headerText={"List of plants"}
+                      headerText={"Shop"}
                       headerTextStyle={{color:"white", 
                                        fontSize: 15}}
                       bottomUpSlideBtn={{display: 'flex',
@@ -125,14 +130,15 @@ export default class HomeScreen extends React.Component {
     );
   }
   
-  
   renderBottomUpPanelContent = () =>
           <View>
                <FlatList style={{ backgroundColor: 'black', opacity: 0.7, flex:1}}
                     data={DATA}
                     renderItem={({item}) =>
-                                <Text style={{color:'white', padding:20}}
-									  onPress={this._handleBuyPlant}>{item.label}</Text>
+                                <Text style={{color:'white', padding:20, textAlign:'center'}}
+									  // https://stackoverflow.com/questions/42137383/react-native-touchablehighlight-onpress-pass-parameter-if-i-pass-the-ite
+									  // TODO: is this the correct way of binding?
+									  onPress={this._handleBuyPlant.bind(this, item)}>{item.label}</Text>
                                }
 					keyExtractor={(item, index) => index.toString()}
                 />
@@ -148,6 +154,8 @@ export default class HomeScreen extends React.Component {
 	  for(let i = 0; i < this.state.plants.length; i++){
 		  console.log("Created component")
 			plants.push( <View style={styles.welcomeContainer} key={i}>
+			// delayPressIn={50}
+			// https://stackoverflow.com/questions/37610705/make-touchableopacity-not-highlight-element-when-starting-to-scroll-react-nativ#new-answer
 			<TouchableOpacity onPress={this._handleTreeClick}>
 				<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
 			</TouchableOpacity>
@@ -195,10 +203,11 @@ export default class HomeScreen extends React.Component {
     }
   }
   
-  _handleBuyPlant = () => {
+  _handleBuyPlant = (item) => {
 	var newPlants = this.state.plants.slice();
-    newPlants.push({icon: ":)", increment: 1}); 
-	this.setState({ oxygen: this.state.oxygen - 10, plants: newPlants});  
+    newPlants.push({icon: ":)", increment: item.increment}); 
+	console.log("Buying plant for: " + item.amount);
+	this.setState({ oxygen: this.state.oxygen - item.amount, plants: newPlants});  
   };
   
   _handleTreeClick = () => {
