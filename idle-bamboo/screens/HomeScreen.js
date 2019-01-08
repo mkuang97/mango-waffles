@@ -23,6 +23,9 @@ const DATA= [{label: "Plant 1", icon: ":)", amount: 5, increment: 1},
 
 
 export default class HomeScreen extends React.Component {
+	
+  // TODO: fix spacing
+  // TODO: ensure state is read safety
   state = {
 	oxygen: 0,
 	plants: [],
@@ -130,14 +133,14 @@ export default class HomeScreen extends React.Component {
     );
   }
   
+  // https://stackoverflow.com/questions/42137383/react-native-touchablehighlight-onpress-pass-parameter-if-i-pass-the-ite
+  // TODO: is this the correct way of binding?
   renderBottomUpPanelContent = () =>
           <View>
                <FlatList style={{ backgroundColor: 'black', opacity: 0.7, flex:1}}
                     data={DATA}
                     renderItem={({item}) =>
                                 <Text style={{color:'white', padding:20, textAlign:'center'}}
-									  // https://stackoverflow.com/questions/42137383/react-native-touchablehighlight-onpress-pass-parameter-if-i-pass-the-ite
-									  // TODO: is this the correct way of binding?
 									  onPress={this._handleBuyPlant.bind(this, item)}>{item.label}</Text>
                                }
 					keyExtractor={(item, index) => index.toString()}
@@ -150,19 +153,46 @@ export default class HomeScreen extends React.Component {
   renderPlants = () => {
 	  console.log(this.state.plants.length)
 	  console.log(0 < this.state.plants.length)
-	  plants = []
-	  for(let i = 0; i < this.state.plants.length; i++){
-		  console.log("Created component")
-			plants.push( <View style={styles.welcomeContainer} key={i}>
-			// delayPressIn={50}
-			// https://stackoverflow.com/questions/37610705/make-touchableopacity-not-highlight-element-when-starting-to-scroll-react-nativ#new-answer
-			<TouchableOpacity onPress={this._handleTreeClick}>
-				<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
-			</TouchableOpacity>
-		  </View> )
-		  }
-	return plants
+	  //plants = []
+	  //for(let i = 0; i < this.state.plants.length; i++){
+		  //console.log("Created component")
+		  // delayPressIn={50}
+		  // https://stackoverflow.com/questions/37610705/make-touchableopacity-not-highlight-element-when-starting-to-scroll-react-nativ#new-answer
+//			plants.push( <View style={styles.welcomeContainer} key={i}>
+			//<TouchableOpacity onPress={this._handleTreeClick}>
+//				<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+			//</TouchableOpacity>
+		  //</View> )
+		  //}
+	  //return plants
+	  const data = [1, 2, 3, 4, 5];
+        return (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            {
+                data.map((datum) => { // This will render a row for each data element.
+                    return this.renderRow(datum);
+                })
+            }
+            </View>
+        );
   }
+  
+  	// very hacky key
+    renderRow = (row) => {
+        return (
+            <View style={{ flex: 1, alignSelf: 'stretch', flexDirection: 'row' }} key={row}>
+                <View style={{ flex: 1, alignSelf: 'stretch' }} > 
+					<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+				</View>
+                <View style={{ flex: 1, alignSelf: 'stretch' }} >
+					<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+				</View>
+                <View style={{ flex: 1, alignSelf: 'stretch' }} />
+                <View style={{ flex: 1, alignSelf: 'stretch' }} />
+                <View style={{ flex: 1, alignSelf: 'stretch' }} />
+            </View>
+        );
+    }
   
   	renderScore = () => (
 		<Text
@@ -246,8 +276,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   treeImage: {
-	  width: 400,
-	  height: 200,
+	  width: 200,
+	  height: 100,
 	  resizeMode: 'contain',
 	  alignContent: 'center',
   },
