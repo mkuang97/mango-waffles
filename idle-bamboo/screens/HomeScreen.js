@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {
   Dimensions,
+  ImageBackground,
   FlatList,
   Image,
   Platform,
@@ -16,20 +17,32 @@ import {Ionicons} from '@expo/vector-icons';
 
 import BottomUpPanel from "./Popup";
 
+
 const {height} = Dimensions.get('window');
-const DATA= [{label: "Plant 1", icon: ":)", amount: 5, increment: 1},
-		     {label: "Plant 2", icon: ":)", amount: 10, increment: 5},
-			 {label: "Plant 3", icon: ":)", amount: 15, increment: 10}];
+const DATA= [{label: "Plant 1", icon: require('../assets/images/plant.png'), amount: 5, increment: 1},
+		     {label: "Plant 2", icon: require('../assets/images/plant.png'), amount: 10, increment: 5},
+			 {label: "Plant 3", icon: require('../assets/images/plant.png'), amount: 15, increment: 10}];
 
 
 export default class HomeScreen extends React.Component {
-	
-  // TODO: fix spacing
+
+  constructor(props){
+	  super(props);
+	  
+	  this.state = {
+			oxygen: 0,
+			increase: 1,
+			plants: new Array(5),
+	  };
+	  
+	  for(i = 0; i < 5; i++){
+		  this.state.plants[i] = new Array(3);
+	  }
+  }
+
+  // TODO: fix formatting
   // TODO: ensure state is read safety
-  state = {
-	oxygen: 0,
-	plants: [],
-  };
+
 
 	getSum = ({total, plant}) => {
 		console.log("plant" + plant)
@@ -39,7 +52,7 @@ export default class HomeScreen extends React.Component {
 	tick() {
 		console.log(this.state.plants)
 		this.setState(prevState => ({
-			oxygen: prevState.oxygen + prevState.plants.reduce((prev, plant) => prev + plant.increment, 0) + 1
+			oxygen: prevState.oxygen + prevState.increase
 		}));
 	}
 
@@ -58,90 +71,100 @@ export default class HomeScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-		
-		{/** note for react to not barf in the render method the comments must follow this form as seen below**/}
-		
-			{/**<View style={styles.welcomeContainer}>
-            <Image
-              source={
-                __DEV__
-                  ? require('../assets/images/robot-dev.png')
-                  : require('../assets/images/robot-prod.png')
-              }
-              style={styles.welcomeImage}
-            />
-          </View>
+		<ImageBackground source={{uri: '../assets/images/plant.png'}} imageStyle={{resizeMode: 'stretch'}} style={{width: '100%', height: '100%'}}>
+			<Image source={require('../assets/images/background.png')} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}/>
+			<ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+			
+			{/** note for react to not barf in the render method the comments must follow this form as seen below**/}
+			
+				{/**<View style={styles.welcomeContainer}>
+				<Image
+				  source={
+					__DEV__
+					  ? require('../assets/images/robot-dev.png')
+					  : require('../assets/images/robot-prod.png')
+				  }
+				  style={styles.welcomeImage}
+				/>
+			  </View>
 
-          <View style={styles.getStartedContainer}>
-            {this._maybeRenderDevelopmentModeWarning()}
+			  <View style={styles.getStartedContainer}>
+				{this._maybeRenderDevelopmentModeWarning()}
 
-            <Text style={styles.getStartedText}>Get started by opening</Text>
+				<Text style={styles.getStartedText}>Get started by opening</Text>
 
-            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-              <MonoText style={styles.codeHighlightText}>screens/HomeScreen.js</MonoText>
-            </View>
+				<View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
+				  <MonoText style={styles.codeHighlightText}>screens/HomeScreen.js</MonoText>
+				</View>
 
-            <Text style={styles.getStartedText}>
-              Change that text and your app will automatically reload.
-            </Text>
-          </View>
+				<Text style={styles.getStartedText}>
+				  Change that text and your app will automatically reload.
+				</Text>
+			  </View>
 
-          <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
-            </TouchableOpacity>
-  </View>**/}
-		  
-		
-		{/** TODO: split up various UI peices into several components to prevent unnecessary virtual dom creation
-		on every setState call **/}
-          <View style={styles.helpContainer}>
-			{this.renderScore()}
-		  </View>
-		  
-		  <View>
-		  {this.renderPlants()}
-		  </View>
-        </ScrollView>
+			  <View style={styles.helpContainer}>
+				<TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
+				  <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
+				</TouchableOpacity>
+	  </View>**/}
+			  
+			
+			{/** TODO: split up various UI peices into several components to prevent unnecessary virtual dom creation
+			on every setState call **/}
+			  <View style={styles.helpContainer}>
+				{this.renderScore()}
+			  </View>
+			  
+			  <View>
+			  {this.renderPlants()}
+			  </View>
+			</ScrollView>
 
-        {/**<View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
+			{/**<View style={styles.tabBarInfoContainer}>
+			  <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
 
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
-          </View>
-        </View>**/}
-		
-		<BottomUpPanel
-                      content={this.renderBottomUpPanelContent}
-                      icon={this.renderBottomUpPanelIcon}
-                      topEnd={height - 300}
-                      startHeight={80}
-                      headerText={"Shop"}
-                      headerTextStyle={{color:"white", 
-                                       fontSize: 15}}
-                      bottomUpSlideBtn={{display: 'flex',
-                                       alignSelf: 'flex-start',
-                                       backgroundColor: 'black',
-                                       alignItems: 'center',
-                                       borderTopColor: 'grey',
-                                       borderTopWidth: 5}}>
-		</BottomUpPanel>  
-		
+			  <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
+				<MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
+			  </View>
+			</View>**/}
+			
+			<BottomUpPanel
+						  content={this.renderBottomUpPanelContent}
+						  icon={this.renderBottomUpPanelIcon}
+						  topEnd={height - 300}
+						  startHeight={80}
+						  headerText={"Shop"}
+						  headerTextStyle={{color:"white", 
+										   fontSize: 15}}
+						  bottomUpSlideBtn={{display: 'flex',
+										   alignSelf: 'flex-start',
+										   backgroundColor: 'black',
+										   alignItems: 'center',
+										   borderTopColor: 'grey',
+										   borderTopWidth: 5}}>
+			</BottomUpPanel>
+		</ImageBackground>
       </View>
     );
   }
   
+
+  
   // https://stackoverflow.com/questions/42137383/react-native-touchablehighlight-onpress-pass-parameter-if-i-pass-the-ite
   // TODO: is this the correct way of binding?
   renderBottomUpPanelContent = () =>
-          <View>
+          <View style={{ width: '100%'}}>
                <FlatList style={{ backgroundColor: 'black', opacity: 0.7, flex:1}}
+					contentContainerStyle={styles.listView}
                     data={DATA}
                     renderItem={({item}) =>
-                                <Text style={{color:'white', padding:20, textAlign:'center'}}
-									  onPress={this._handleBuyPlant.bind(this, item)}>{item.label}</Text>
+									<View style={{ width: '50%', backgroundColor: 'rgba(52, 52, 52, 0.8)', justifyContent: 'center', flex: 1 }} >
+										<TouchableOpacity onPress={this._handleBuyPlant.bind(this, item)} style={styles.helpLink}>
+											<Text style={{color:'white', padding:20, textAlign:'center'}}
+												  onPress={this._handleBuyPlant.bind(this, item)}>{item.label}</Text>
+											<Image source={item.icon} style={styles.treeShopImage}/>
+										</TouchableOpacity>
+									</View>
                                }
 					keyExtractor={(item, index) => index.toString()}
                 />
@@ -167,7 +190,7 @@ export default class HomeScreen extends React.Component {
 	  //return plants
 	  const data = [1, 2, 3, 4, 5];
         return (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             {
                 data.map((datum) => { // This will render a row for each data element.
                     return this.renderRow(datum);
@@ -178,18 +201,34 @@ export default class HomeScreen extends React.Component {
   }
   
   	// very hacky key
+	// and hard coded everything...
     renderRow = (row) => {
         return (
             <View style={{ flex: 1, alignSelf: 'stretch', flexDirection: 'row' }} key={row}>
                 <View style={{ flex: 1, alignSelf: 'stretch' }} > 
-					<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+					{this.state.plants[row - 1][0] !== undefined ? ( 
+						<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+						) : (
+						<Text style={styles.emptyBlock}/>
+						)
+					}
 				</View>
                 <View style={{ flex: 1, alignSelf: 'stretch' }} >
-					<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+					{this.state.plants[row - 1][1] !== undefined ? ( 
+						<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+						) : (
+						<Text style={styles.emptyBlock}/>
+						)
+					}
 				</View>
-                <View style={{ flex: 1, alignSelf: 'stretch' }} />
-                <View style={{ flex: 1, alignSelf: 'stretch' }} />
-                <View style={{ flex: 1, alignSelf: 'stretch' }} />
+                <View style={{ flex: 1, alignSelf: 'stretch' }} >
+					{this.state.plants[row - 1][2] !== undefined ? ( 
+						<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+						) : (
+						<Text style={styles.emptyBlock}/>
+						)
+					}
+				</View>
             </View>
         );
     }
@@ -233,11 +272,30 @@ export default class HomeScreen extends React.Component {
     }
   }
   
+  // Returns a random integer between min (inclusive) and max (inclusive).
+  getRandomInt = (min, max) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  
   _handleBuyPlant = (item) => {
 	var newPlants = this.state.plants.slice();
-    newPlants.push({icon: ":)", increment: item.increment}); 
+    //newPlants.push({icon: ":)", increment: item.increment});
+	while(true){
+		x = this.getRandomInt(0, newPlants.length - 1);
+		y = this.getRandomInt(0, newPlants[0].length - 1);
+		if(newPlants[x][y] === undefined){
+			newPlants[x][y] = {icon: ":)", increment: item.increment};
+			break;
+		}
+    }
 	console.log("Buying plant for: " + item.amount);
-	this.setState({ oxygen: this.state.oxygen - item.amount, plants: newPlants});  
+	this.setState(prevState => ({
+		oxygen: this.state.oxygen - item.amount, 
+		plants: newPlants,
+		increase: prevState.increase + item.increment
+	}));
   };
   
   _handleTreeClick = () => {
@@ -256,9 +314,12 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+   listView: {
+     flex: 1,
+     justifyContent: 'center',
+   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   developmentModeText: {
     marginBottom: 20,
@@ -275,8 +336,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
   },
+  emptyBlock: {
+	  width: 150,
+	  height: 100,
+  },
   treeImage: {
-	  width: 200,
+	  width: 150,
+	  height: 100,
+	  resizeMode: 'contain',
+	  alignContent: 'center',
+  },
+  treeShopImage: {
+	  width: '100%',
 	  height: 100,
 	  resizeMode: 'contain',
 	  alignContent: 'center',

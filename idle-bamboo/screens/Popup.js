@@ -137,6 +137,8 @@ export default class BottomUpPanel extends Component {
                             // Trigger onScroll often
                             scrollEventThrottle={16}                          
                             onScroll={this._handleScroll}
+							contentContainerStyle={styles.center}
+							styles={{flex: 1}}
                         >
                             {/* Render content components */}
                             {content()}
@@ -146,6 +148,8 @@ export default class BottomUpPanel extends Component {
 
         );
     }
+	
+
 
 
     open = () => {
@@ -201,6 +205,10 @@ export default class BottomUpPanel extends Component {
    }
 
 const styles = StyleSheet.create({
+	center: {
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
     container: {
         alignItems: 'center',
         justifyContent: 'flex-end',
