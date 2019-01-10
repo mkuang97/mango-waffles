@@ -19,11 +19,20 @@ import BottomUpPanel from "./Popup";
 
 
 const {height} = Dimensions.get('window');
-const DATA= [{label: "Plant 1", icon: require('../assets/images/plant.png'), amount: 5, increment: 1},
-		     {label: "Plant 2", icon: require('../assets/images/plant.png'), amount: 10, increment: 5},
-			 {label: "Plant 3", icon: require('../assets/images/plant.png'), amount: 15, increment: 10}];
+var ShopItemTypes = {
+  PLANT: 1,
+  ROW: 2,
+};
 
+const shopItems = [{label: "Plant 1", icon: require('../assets/images/plant.png'), type: ShopItemTypes.PLANT, amount: 5, increment: 1},
+				   {label: "Plant 2", icon: require('../assets/images/plant.png'), type: ShopItemTypes.PLANT, amount: 10, increment: 5},
+				   {label: "Plant 3", icon: require('../assets/images/plant.png'), type: ShopItemTypes.PLANT, amount: 15, increment: 10},
+				   {label: "Row", icon: require('../assets/images/plant.png'), type: ShopItemTypes.ROW, amount: 100},
+				   ];
+				   
 
+placeHolder = require('../assets/images/placeholder.png')
+				   
 export default class HomeScreen extends React.Component {
 
   constructor(props){
@@ -156,12 +165,13 @@ export default class HomeScreen extends React.Component {
           <View style={{ width: '100%'}}>
                <FlatList style={{ backgroundColor: 'black', opacity: 0.7, flex:1}}
 					contentContainerStyle={styles.listView}
-                    data={DATA}
+                    data={shopItems}
                     renderItem={({item}) =>
 									<View style={{ width: '100%', backgroundColor: 'rgba(52, 52, 52, 0.8)', justifyContent: 'center', flex: 1 }} >
 										<TouchableOpacity delayPressIn={50} onPress={this._handleBuyPlant.bind(this, item)} style={styles.helpLink}>
-											<Text style={{color:'white', padding:20, textAlign:'center'}}
-												  onPress={this._handleBuyPlant.bind(this, item)}>{item.label}</Text>
+											<Text style={{color:'white', padding:20, textAlign:'center'}}>
+												{item.label}
+											</Text>
 											<Image source={item.icon} style={styles.treeShopImage}/>
 										</TouchableOpacity>
 									</View>
@@ -188,7 +198,8 @@ export default class HomeScreen extends React.Component {
 		  //</View> )
 		  //}
 	  //return plants
-	  const data = [1, 2, 3, 4, 5];
+	  const data = [ ...Array(this.state.plants.length).keys() ];
+	  console.log("This is data " + data)
         return (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             {
@@ -206,26 +217,26 @@ export default class HomeScreen extends React.Component {
         return (
             <View style={{ flex: 1, alignSelf: 'stretch', flexDirection: 'row' }} key={row}>
                 <View style={{ flex: 1, alignSelf: 'stretch' }} > 
-					{this.state.plants[row - 1][0] !== undefined ? ( 
-						<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+					{this.state.plants[row][0] !== undefined ? ( 
+						<Image source={this.state.plants[row][0].icon} style={styles.treeImage}/>
 						) : (
-						<Text style={styles.emptyBlock}/>
+						<Image source={placeHolder} style={styles.treeImage}/>
 						)
 					}
 				</View>
                 <View style={{ flex: 1, alignSelf: 'stretch' }} >
-					{this.state.plants[row - 1][1] !== undefined ? ( 
-						<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+					{this.state.plants[row][1] !== undefined ? ( 
+						<Image source={this.state.plants[row][1].icon} style={styles.treeImage}/>
 						) : (
-						<Text style={styles.emptyBlock}/>
+						<Image source={placeHolder} style={styles.treeImage}/>
 						)
 					}
 				</View>
                 <View style={{ flex: 1, alignSelf: 'stretch' }} >
-					{this.state.plants[row - 1][2] !== undefined ? ( 
-						<Image source={require('../assets/images/plant.png')} style={styles.treeImage}/>
+					{this.state.plants[row][2] !== undefined ? ( 
+						<Image source={this.state.plants[row][2].icon} style={styles.treeImage}/>
 						) : (
-						<Text style={styles.emptyBlock}/>
+						<Image source={placeHolder} style={styles.treeImage}/>
 						)
 					}
 				</View>
@@ -280,22 +291,33 @@ export default class HomeScreen extends React.Component {
   }
   
   _handleBuyPlant = (item) => {
-	var newPlants = this.state.plants.slice();
-    //newPlants.push({icon: ":)", increment: item.increment});
-	while(true){
-		x = this.getRandomInt(0, newPlants.length - 1);
-		y = this.getRandomInt(0, newPlants[0].length - 1);
-		if(newPlants[x][y] === undefined){
-			newPlants[x][y] = {icon: ":)", increment: item.increment};
-			break;
+	if (item.type === ShopItemTypes.PLANT){
+		// TODO: I think this is mutating not deep copying which is bad...
+		var newPlants = this.state.plants.slice();
+		//newPlants.push({icon: ":)", increment: item.increment});
+		while(true){
+			x = this.getRandomInt(0, newPlants.length - 1);
+			y = this.getRandomInt(0, newPlants[0].length - 1);
+			if(newPlants[x][y] === undefined){
+				newPlants[x][y] = {icon: require('../assets/images/plant.png'), increment: item.increment};
+				break;
+			}
 		}
-    }
-	console.log("Buying plant for: " + item.amount);
-	this.setState(prevState => ({
-		oxygen: this.state.oxygen - item.amount, 
-		plants: newPlants,
-		increase: prevState.increase + item.increment
-	}));
+		console.log("Buying plant for: " + item.amount);
+		this.setState(prevState => ({
+			oxygen: this.state.oxygen - item.amount, 
+			plants: newPlants,
+			increase: prevState.increase + item.increment
+		}));
+	} else if(item.type === ShopItemTypes.ROW) {
+		var newPlants = this.state.plants.slice();
+		newPlants.push(new Array(3))
+		this.setState(prevState => ({
+			oxygen: this.state.oxygen - item.amount, 
+			plants: newPlants,
+			increase: prevState.increase
+		}));
+	}
   };
   
   _handleTreeClick = () => {
