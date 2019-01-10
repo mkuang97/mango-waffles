@@ -158,8 +158,8 @@ export default class HomeScreen extends React.Component {
 					contentContainerStyle={styles.listView}
                     data={DATA}
                     renderItem={({item}) =>
-									<View style={{ width: '50%', backgroundColor: 'rgba(52, 52, 52, 0.8)', justifyContent: 'center', flex: 1 }} >
-										<TouchableOpacity onPress={this._handleBuyPlant.bind(this, item)} style={styles.helpLink}>
+									<View style={{ width: '100%', backgroundColor: 'rgba(52, 52, 52, 0.8)', justifyContent: 'center', flex: 1 }} >
+										<TouchableOpacity delayPressIn={50} onPress={this._handleBuyPlant.bind(this, item)} style={styles.helpLink}>
 											<Text style={{color:'white', padding:20, textAlign:'center'}}
 												  onPress={this._handleBuyPlant.bind(this, item)}>{item.label}</Text>
 											<Image source={item.icon} style={styles.treeShopImage}/>
