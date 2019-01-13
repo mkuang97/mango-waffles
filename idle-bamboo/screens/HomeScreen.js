@@ -17,6 +17,8 @@ import {Ionicons} from '@expo/vector-icons';
 
 import BottomUpPanel from "./Popup";
 
+ROWS = 5
+COLUMNS = 3
 
 const {height} = Dimensions.get('window');
 var ShopItemTypes = {
@@ -41,16 +43,17 @@ export default class HomeScreen extends React.Component {
 	  this.state = {
 			oxygen: 0,
 			increase: 1,
-			plants: new Array(5),
+			plants: new Array(ROWS),
 	  };
 	  
-	  for(i = 0; i < 5; i++){
-		  this.state.plants[i] = new Array(3);
+	  for(i = 0; i < ROWS; i++){
+		  this.state.plants[i] = new Array(COLUMNS);
 	  }
   }
 
   // TODO: fix formatting
-  // TODO: ensure state is read safety
+  // TODO: ensure state is read safety (seems that state can be read directly however need to keep in mind
+  // setState is asyc)
 
 
 	getSum = ({total, plant}) => {
@@ -163,7 +166,7 @@ export default class HomeScreen extends React.Component {
   // TODO: is this the correct way of binding?
   renderBottomUpPanelContent = () =>
           <View style={{ width: '100%'}}>
-               <FlatList style={{ backgroundColor: 'black', opacity: 0.7, flex:1}}
+               <FlatList style={{ backgroundColor: 'black', opacity: 0.9, flex:1}}
 					contentContainerStyle={styles.listView}
                     data={shopItems}
                     renderItem={({item}) =>
@@ -198,13 +201,14 @@ export default class HomeScreen extends React.Component {
 		  //</View> )
 		  //}
 	  //return plants
-	  const data = [ ...Array(this.state.plants.length).keys() ];
+	  const data = [...Array(this.state.plants.length).keys()];
+	  const data1 = [0, 1, 2]
 	  console.log("This is data " + data)
         return (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             {
                 data.map((datum) => { // This will render a row for each data element.
-                    return this.renderRow(datum);
+                    return this.renderRow(datum, data1);
                 })
             }
             </View>
@@ -213,33 +217,21 @@ export default class HomeScreen extends React.Component {
   
   	// very hacky key
 	// and hard coded everything...
-    renderRow = (row) => {
+    renderRow = (row, columns) => {
         return (
             <View style={{ flex: 1, alignSelf: 'stretch', flexDirection: 'row' }} key={row}>
-                <View style={{ flex: 1, alignSelf: 'stretch' }} > 
-					{this.state.plants[row][0] !== undefined ? ( 
-						<Image source={this.state.plants[row][0].icon} style={styles.treeImage}/>
-						) : (
-						<Image source={placeHolder} style={styles.treeImage}/>
-						)
-					}
-				</View>
-                <View style={{ flex: 1, alignSelf: 'stretch' }} >
-					{this.state.plants[row][1] !== undefined ? ( 
-						<Image source={this.state.plants[row][1].icon} style={styles.treeImage}/>
-						) : (
-						<Image source={placeHolder} style={styles.treeImage}/>
-						)
-					}
-				</View>
-                <View style={{ flex: 1, alignSelf: 'stretch' }} >
-					{this.state.plants[row][2] !== undefined ? ( 
-						<Image source={this.state.plants[row][2].icon} style={styles.treeImage}/>
-						) : (
-						<Image source={placeHolder} style={styles.treeImage}/>
-						)
-					}
-				</View>
+				{
+						columns.map((datum) => {
+							return (<View style={{ flex: 1, alignSelf: 'stretch' }} key={row + "_" + datum}> 
+								{this.state.plants[row][datum] !== undefined ? ( 
+									<Image source={this.state.plants[row][datum].icon} style={styles.treeImage}/>
+								) : (
+									<Image source={placeHolder} style={styles.treeImage}/>
+								)
+								}
+							</View>)
+						})
+				}
             </View>
         );
     }
@@ -359,11 +351,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   emptyBlock: {
-	  width: 150,
+	  width: 130,
 	  height: 100,
   },
   treeImage: {
-	  width: 150,
+	  width: 130,
 	  height: 100,
 	  resizeMode: 'contain',
 	  alignContent: 'center',
