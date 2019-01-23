@@ -184,26 +184,30 @@ export default class HomeScreen extends React.Component {
 							this.setState(prevState => ({
 								mode: "delete"
 							}));
+							
+							repeatLoop = () => {
+								this.scaleValue.setValue(0);
+								console.log("Going bigger")
+								Animated.timing(this.scaleValue, {
+								  toValue: 1,
+								  duration: 3000,
+								  easing: Easing.linear,
+								  useNativeDriver: true
+								}).start(() => {
+									console.log("Going smaller")
+									Animated.timing(this.scaleValue, {
+									  toValue: 0,
+									  duration: 3000,
+									  easing: Easing.linear,
+									  useNativeDriver: true
+									}).start(() => {
+										repeatLoop()
+									})
+								});
+							}
+							
+							repeatLoop()
 						}
-						
-						// TODO: loop animations
-						this.scaleValue.setValue(0);
-						console.log("going bigger")
-						Animated.timing(this.scaleValue, {
-						  toValue: 1,
-						  duration: 3000,
-						  easing: Easing.linear,
-						  useNativeDriver: true
-						}).start(() => {
-							console.log("Going smaller")
-							Animated.timing(this.scaleValue, {
-							  toValue: 0,
-							  duration: 3000,
-							  easing: Easing.linear,
-							  useNativeDriver: true
-							}).start()
-						});
-
 						
 					}}>
 						{ this.state.mode === "delete" ? (
@@ -302,6 +306,7 @@ export default class HomeScreen extends React.Component {
 							return (<View style={{ flex: 1, alignSelf: 'stretch' }} key={row + "_" + datum}> 
 								{this.state.plants[row][datum] !== undefined ? 
 									this.state.mode === "delete" ? 
+										/** TODO: by recreating the plants we have some flickering going on which is not great **/
 										( 
 											<TouchableWithoutFeedback onPress={this._handleDeletePlant.bind(this, row, datum)}>
 												<Animated.Image source={this.state.plants[row][datum].icon} style={this.transformStyle} />
