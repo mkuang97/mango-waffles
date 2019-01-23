@@ -62,16 +62,13 @@ export default class HomeScreen extends React.Component {
 		outputRange: [1, 1.1, 1.2]
 	  });
 	  
-	  // https://github.com/erikras/redux-form/issues/3298#issuecomment-451571974 huh? treeImage === treeImageObject?
+	  // getting style sheets doesnt seem to be allowed?
 	  this.transformStyle = {width: 130,
 		  height: 100,
 		  resizeMode: 'contain',
 		  alignContent: 'center',
 		  zIndex: 100,
 		  transform: [{scaleX: this.imageScale, scaleY: this.imageScale}] }
-	  console.log(this.transformStyle)
-	  
-	  console.log(styles.treeImage)
   }
 
   // TODO: fix formatting
@@ -189,7 +186,7 @@ export default class HomeScreen extends React.Component {
 							}));
 						}
 						
-						
+						// TODO: loop animations
 						this.scaleValue.setValue(0);
 						console.log("going bigger")
 						Animated.timing(this.scaleValue, {
@@ -240,9 +237,6 @@ export default class HomeScreen extends React.Component {
       </View>
     );
   }
-  
-  _renderDelete = () => 
-		<Image source={require('../assets/images/background.png')} style={styles.treeImage}/>
   
   // https://stackoverflow.com/questions/42137383/react-native-touchablehighlight-onpress-pass-parameter-if-i-pass-the-ite
   // TODO: is this the correct way of binding?
